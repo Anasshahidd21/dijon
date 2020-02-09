@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const repo = require('./repositories/users');
 
 app.get('/', (req, res) => {
     res.send('Hello');

@@ -74,22 +74,4 @@ class Users {
     }
 }
 
-// Only for testing purposes
-const test = async () => {
-    const users = new Users('hello.json');
-    const allUsers = await users.getAll();
-    console.log(allUsers);
-    const user = {
-        username: 'anas',
-        password: 'testing'
-    };
-    await users.create(user);
-    await users.delete('6f43cf3a');
-    const userx = await users.getOne('6f43cf3a');
-    console.log(userx);
-    await users.update('6f43cf3a', {
-        sexy: 'yolo'
-    });
-}
-
-// test();
+module.exports = new Users('users.json');
