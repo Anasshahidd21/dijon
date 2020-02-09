@@ -1,4 +1,5 @@
 const fs = require('fs');
+const crypto = require('crypto');
 
 class Users {
     constructor(filename) {
@@ -18,9 +19,58 @@ class Users {
     }
 
     async create(credentials) {
+        credentials.id = this.randomID();
         const users = await this.getAll();
         users.push(credentials);
-        await fs.promises.writeFile(this.filename, JSON.stringify(users));
+        this.writeFile(this.filename, users);
+    }
+
+    async writeFile(filename, users) {
+        const write = await fs.promises.writeFile(this.filename, JSON.stringify(users, null, 2));
+        return write;
+    }
+    randomID() {
+        return crypto.randomBytes(4).toString('hex');
+    }
+
+    async delete(id) {
+        let users = await this.getAll();
+        users = users.filter(users => users.id !== id);
+        await this.writeFile(this.filename, users);
+    }
+
+    async getOne(id) {
+        const users = await this.getAll();
+        return users.find(users => users.id === id);
+    }
+
+    async update(id, userAttributes) {
+        const users = await this.getAll();
+        const user = users.find(users => users.id === id);
+
+        if (!user) {
+            throw new Error('Sorry buddy, user not found');
+        }
+
+        Object.assign(user, userAttributes);
+        await this.writeFile(this.filename, users);
+    }
+
+    async getOneBy(filters) {
+        const users = await this.getAll();
+
+        for (let user of users) {
+            let found = true;
+
+            for (let key in filters) {
+                if (user[key] !== filters[key]) {
+                    found = false
+                }
+            }
+            if (found) {
+                return user;
+            }
+        }
     }
 }
 
@@ -34,6 +84,12 @@ const test = async () => {
         password: 'testing'
     };
     await users.create(user);
+    await users.delete('6f43cf3a');
+    const userx = await users.getOne('6f43cf3a');
+    console.log(userx);
+    await users.update('6f43cf3a', {
+        sexy: 'yolo'
+    });
 }
 
-test();
+// test();
