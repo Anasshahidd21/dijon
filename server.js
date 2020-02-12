@@ -2,6 +2,7 @@ const express = require('express');
 const repo = require('./repositories/users');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -84,7 +85,8 @@ app.post('/signin', async (req, res) => {
         res.send("user doesn't exist");
     }
 
-    if (user.password != password) {
+    const passCheck = await repo.comparePasswords(password, user.password);
+    if (!passCheck) {
         res.send('passwords dont match');
     }
 
