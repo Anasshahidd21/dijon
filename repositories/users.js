@@ -1,5 +1,9 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const util = require('util');
+
+
+const scrypt = util.promisify(crypto.scrypt);
 
 class Users {
     constructor(filename) {
@@ -18,17 +22,39 @@ class Users {
         return JSON.parse(users);
     }
 
+    async hashing(password) {
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hashed = await scrypt(password, salt, 64);
+        password = `${hashed.toString('hex')}.${salt}`;
+        return password;
+    }
+
+    async comparePasswords(userPassword, databasePassword) {
+        const [hashed, salt] = databasePassword.split('.');
+        const uPasswordHashed = await scrypt(userPassword, salt, 64);
+        return uPasswordHashed.toString('hex') === hashed;
+    }
+
     async create(credentials) {
         credentials.id = this.randomID();
         const users = await this.getAll();
-        users.push(credentials);
+        const hashedPass = await this.hashing(credentials.password);
+
+        const user = {
+            ...credentials,
+            password: hashedPass,
+        };
+        users.push(user);
         this.writeFile(this.filename, users);
+
+        return user;
     }
 
     async writeFile(filename, users) {
         const write = await fs.promises.writeFile(this.filename, JSON.stringify(users, null, 2));
         return write;
     }
+
     randomID() {
         return crypto.randomBytes(4).toString('hex');
     }
@@ -71,6 +97,7 @@ class Users {
                 return user;
             }
         }
+        return undefined;
     }
 }
 
