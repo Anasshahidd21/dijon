@@ -21,8 +21,13 @@ class Users {
     async create(credentials) {
         credentials.id = this.randomID();
         const users = await this.getAll();
-        users.push(credentials);
+        const user = {
+            ...credentials,
+        };
+        users.push(user);
         this.writeFile(this.filename, users);
+
+        return user;
     }
 
     async writeFile(filename, users) {
@@ -71,6 +76,7 @@ class Users {
                 return user;
             }
         }
+        return undefined;
     }
 }
 
