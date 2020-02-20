@@ -3,7 +3,10 @@ const repo = require('./repositories/users');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-
+const {
+    check,
+    validationResult
+} = require('express-validator');
 const app = express();
 
 app.use(bodyParser.urlencoded({
@@ -26,30 +29,41 @@ app.get('/signup', (req, res) => {
     </div>`);
 });
 
-app.post('/signup', async (req, res) => {
+app.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(async (value, {
+    req
+}) => {
+
+    // console.log(repo);
+    const emailValidation = await repo.getOneBy({
+        'email': value
+    });
+    // console.log(value);
+    console.log(emailValidation);
+    if (emailValidation) {
+        throw new Error('User with the email already exists');
+    }
+})], async (req, res) => {
+    const errors = validationResult(req);
+    console.log(errors);
     const email = req.body.email;
     const password = req.body.password;
     const passwordConfirmation = req.body.passwordConfirmation;
 
-    const emailValidation = await repo.getOneBy({
-        email
-    });
 
-    if (emailValidation) {
-        res.send('User with the email already exists');
-    }
 
     if (password != passwordConfirmation) {
         res.send('Passwords doesnt match');
     }
 
-    const user = await repo.create({
-        email,
-        password
-    });
+    if (errors.isEmpty()) {
+        const user = await repo.create({
+            email,
+            password
+        });
+        req.session.userID = user.id;
+        res.send('account created');
+    }
 
-    req.session.userID = user.id;
-    res.send('account created');
 });
 
 app.get('/signout', (req, res) => {
