@@ -4,6 +4,7 @@ const {
     validationResult
 } = require('express-validator');
 const signupView = require('../views/signupView');
+const signInView = require('../views/signInView');
 const bcrypt = require('bcrypt');
 const repo = require('../repositories/users');
 const app = express();
@@ -74,38 +75,59 @@ router.get('/signout', (req, res) => {
 
 // SignIn
 router.get('/signin', (req, res) => {
-    res.send(`
-    <div>
-        <form method="POST">
-            <input name="email" placeholder="email" />
-            <input name="password" placeholder="password" />
-            <button>Sign In</button>
-        </form>
-    </div>`);
+    res.send(signInView({
+        req
+    }, errorString));
 });
 
-router.post('/signin', async (req, res) => {
-    const {
-        email,
-        password
-    } = req.body;
+router.post('/signin', [
+        check('email').trim().custom(async (email, {
+            req
+        }) => {
 
-    const user = await repo.getOneBy({
-        email
+            const user = await repo.getOneBy({
+                email
+            });
+
+            if (!user) {
+                throw new Error('User doesnt exist');
+            }
+        }),
+        check('password').custom(async (password, {
+            req
+        }) => {
+            const user = await repo.getOneBy({
+                email: req.body.email
+            })
+            const pass = await repo.comparePasswords(password, user.password);
+
+            if (!pass) {
+                throw new Error('Incorrect Password');
+            }
+            // Indicates the success of this synchronous custom validator
+            return true;
+        })
+    ],
+    async (req, res) => {
+        const {
+            email,
+            password
+        } = req.body;
+        const user = await repo.getOneBy({
+            email
+        });
+        const errors = validationResult(req).array();
+        console.log(errors);
+        if (errors.length == 0) {
+            req.session.userID = user.id;
+            res.send('Successfully logged in');
+        } else {
+            console.log(joinErrors(errors));
+            res.send(signInView({
+                req
+            }, joinErrors(errors)));
+        }
     });
-
-    if (!user) {
-        res.send("user doesn't exist");
-    }
-
-    const passCheck = await repo.comparePasswords(password, user.password);
-    if (!passCheck) {
-        res.send('passwords dont match');
-    }
-
-    req.session.userID = user.id;
-    res.send('Successfully logged in');
-});
 
 
 
@@ -113,11 +135,8 @@ router.post('/signin', async (req, res) => {
 function joinErrors(err) {
     let errorStr = '';
     err.forEach(element => {
-        errorStr = errorStr + element.msg;
+        errorStr = errorStr + element.msg + '\n';
     });
-    // for (er in err) {
-    //     errorString = er + er.msg;
-    // }
     return errorStr;
 }
 
