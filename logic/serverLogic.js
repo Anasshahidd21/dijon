@@ -37,7 +37,7 @@ router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(
         throw new Error('Password confirmation does not match password');
     }
     // Indicates the success of this synchronous custom validator
-    return true;
+    // return true;
 })], async (req, res) => {
     const errors = validationResult(req).array();
     const email = req.body.email;
@@ -99,6 +99,10 @@ router.post('/signin', [
             const user = await repo.getOneBy({
                 email: req.body.email
             })
+
+            if (!user) {
+                throw new Error('Incorrect Password');
+            }
             const pass = await repo.comparePasswords(password, user.password);
 
             if (!pass) {
@@ -129,13 +133,10 @@ router.post('/signin', [
         }
     });
 
-
-
-
 function joinErrors(err) {
     let errorStr = '';
     err.forEach(element => {
-        errorStr = errorStr + element.msg + '\n';
+        errorStr = errorStr + element.msg + "\n";
     });
     return errorStr;
 }
