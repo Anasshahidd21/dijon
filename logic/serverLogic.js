@@ -9,14 +9,17 @@ const bcrypt = require('bcrypt');
 const repo = require('../repositories/users');
 const app = express();
 const router = express.Router();
+const layoutView = require('../views/layout');
 
 let errorString = '';
 // Signup
 router.get('/signup', (req, res) => {
-    console.log(req.session);
-    res.send(signupView({
+
+    res.send(layoutView(signupView({
         req
-    }, errorString));
+    }, errorString), {
+        req
+    }));
 });
 
 router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(async (email, {
@@ -37,7 +40,7 @@ router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(
         throw new Error('Password confirmation does not match password');
     }
     // Indicates the success of this synchronous custom validator
-    // return true;
+    return true;
 })], async (req, res) => {
     const errors = validationResult(req).array();
     const email = req.body.email;
@@ -121,12 +124,10 @@ router.post('/signin', [
             email
         });
         const errors = validationResult(req).array();
-        console.log(errors);
         if (errors.length == 0) {
             req.session.userID = user.id;
             res.send('Successfully logged in');
         } else {
-            console.log(joinErrors(errors));
             res.send(signInView({
                 req
             }, joinErrors(errors)));

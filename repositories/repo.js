@@ -45,11 +45,23 @@ class Repository {
         return crypto.randomBytes(4).toString('hex');
     }
 
+
+    async create(attrs) {
+        let users = await this.getAll();
+        const user = {
+            ...attrs
+        };
+        users.push(user);
+
+        return user;
+    }
+
     async delete(id) {
         let users = await this.getAll();
         users = users.filter(users => users.id !== id);
         await this.writeFile(this.filename, users);
     }
+
 
     async getOne(id) {
         const users = await this.getAll();
