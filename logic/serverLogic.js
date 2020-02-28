@@ -9,13 +9,17 @@ const bcrypt = require('bcrypt');
 const repo = require('../repositories/users');
 const app = express();
 const router = express.Router();
+const layoutView = require('../views/layout');
 
 let errorString = '';
 // Signup
 router.get('/signup', (req, res) => {
-    res.send(signupView({
+
+    res.send(layoutView(signupView({
         req
-    }, errorString));
+    }, errorString), {
+        req
+    }));
 });
 
 router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(async (email, {

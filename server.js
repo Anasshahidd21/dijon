@@ -5,10 +5,10 @@ const cookieSession = require('cookie-session');
 const authLogic = require('./logic/serverLogic');
 
 const app = express();
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
 app.use(cookieSession({
     keys: ['skjfdalkj']
 }));
