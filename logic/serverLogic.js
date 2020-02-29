@@ -19,7 +19,7 @@ router.get('/signup', (req, res) => {
         req
     }, errorString), {
         req
-    }));
+    }, 'signup'));
 });
 
 router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(async (email, {
@@ -78,9 +78,11 @@ router.get('/signout', (req, res) => {
 
 // SignIn
 router.get('/signin', (req, res) => {
-    res.send(signInView({
+    res.send(layoutView(signInView({
         req
-    }, errorString));
+    }, errorString), {
+        req
+    }, 'Signin'));
 });
 
 router.post('/signin', [
