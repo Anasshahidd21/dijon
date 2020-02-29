@@ -2,13 +2,25 @@ module.exports = ({
     req
 }, errorString) => {
     return `<div>
-${req.session.userID}
+ 
 <form method="POST">
     <input name="email" placeholder="email" />
+    <div class= "errorPrint">${errorCheck(errorString.email)}</div>
     <input name="password" placeholder="password" />
+    <div class = "errorPrint">${errorCheck(errorString.password)}</div>
     <input name="passwordConfirmation" placeholder="passwordConfirmation" />
-    <button>Sign up</button>
-    <div class = "errorPrint">${errorString}</div>
+    <div class = "errorPrint">${errorCheck(errorString.passwordConfirmation)}</div>
+    <button>Sign up</button><br><br><br>
+       <div>Session ID: ${req.session.userID}</div>
 </form>
 </div>`
 };
+
+function errorCheck(property) {
+    if (property) {
+        console.log(property);
+        return property;
+    }
+
+    return '';
+}
