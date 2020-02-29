@@ -20,3 +20,7 @@ input {
 button {
     margin: 2vh;
 }
+
+.errorPrint {
+    color: rgb(204, 56, 56);
+}

@@ -17,10 +17,10 @@ module.exports = ({
 };
 
 function errorCheck(property) {
-    if (property) {
-        console.log(property);
-        return property;
-    }
 
-    return '';
+    return property ? property : '';
+    // if (property) {
+    //     return property;
+    // }
+    // return '';
 }
