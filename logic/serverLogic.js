@@ -19,10 +19,10 @@ router.get('/signup', (req, res) => {
         req
     }, errorString), {
         req
-    }));
+    }, 'signup'));
 });
 
-router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(async (email, {
+router.post('/signup', [check('email').trim().normalizeEmail().isEmail().withMessage('Invalid Email').custom(async (email, {
     req
 }) => {
 
@@ -33,10 +33,12 @@ router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(
     if (emailValidation) {
         throw new Error('User with the email already exists');
     }
-}), check('password', 'Your password must be at least 5 characters').trim().not().isEmpty().exists().custom((value, {
+}), check('password', 'Your password must be at least 5 characters').trim().not().isEmpty().exists().isLength({
+    min: 5
+}), check('passwordConfirmation').custom((value, {
     req
 }) => {
-    if (value !== req.body.passwordConfirmation) {
+    if (value !== req.body.password) {
         throw new Error('Password confirmation does not match password');
     }
     // Indicates the success of this synchronous custom validator
@@ -57,9 +59,11 @@ router.post('/signup', [check('email').trim().normalizeEmail().isEmail().custom(
         req.session.userID = user.id;
         res.send('account created');
     } else {
-        res.send(signupView({
+        res.send(layoutView(signupView({
             req
-        }, joinErrors(errors)));
+        }, joinErrors(errors)), {
+            req
+        }, 'signup'));
     }
 });
 
@@ -78,9 +82,11 @@ router.get('/signout', (req, res) => {
 
 // SignIn
 router.get('/signin', (req, res) => {
-    res.send(signInView({
+    res.send(layoutView(signInView({
         req
-    }, errorString));
+    }, errorString), {
+        req
+    }, 'Signin'));
 });
 
 router.post('/signin', [
@@ -128,18 +134,20 @@ router.post('/signin', [
             req.session.userID = user.id;
             res.send('Successfully logged in');
         } else {
-            res.send(signInView({
+            res.send(layoutView(signInView({
                 req
-            }, joinErrors(errors)));
+            }, joinErrors(errors)), {
+                req
+            }, 'signin'));
         }
     });
 
 function joinErrors(err) {
-    let errorStr = '';
-    err.forEach(element => {
-        errorStr = errorStr + element.msg + "\n";
-    });
-    return errorStr;
+    const error = err.reduce(
+        (obj, item) => Object.assign(obj, {
+            [item.param]: item.msg
+        }), {});
+    return error;
 }
 
 

@@ -4,9 +4,19 @@ module.exports = ({
     return `<div>
 <form method="POST">
     <input name="email" placeholder="email" />
+    <div class= "errorPrint">${errorCheck(errorString.email)}</div>
     <input name="password" placeholder="password" />
+    <div class = "errorPrint">${errorCheck(errorString.password)}</div>
     <button>Sign In</button>
-    <div class = "errorPrint">${errorString}</div>
 </form>
 </div>`
+}
+
+
+function errorCheck(property) {
+    if (property) {
+        return property;
+    }
+
+    return '';
 }

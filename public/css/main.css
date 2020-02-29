@@ -1,0 +1,26 @@
+input {
+    display: block;
+    padding: 0.5rem;
+
+    background: none;
+    text-decoration: none;
+    margin: 2vh 0;
+    width: 15vw;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-self: center;
+    margin-top: 25vh;
+    text-align: center;
+}
+
+button {
+    margin: 2vh;
+}
+
+.errorPrint {
+    color: rgb(204, 56, 56);
+}
