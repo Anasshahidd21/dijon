@@ -1,9 +1,8 @@
-import {
+const {
     Repository
-} from "./repo";
+} = require('./repo')
+const fs = require('fs');
 
-class Products extends Repository {
-
-}
+class Products extends Repository {}
 
 module.exports = new Products('products.json');
