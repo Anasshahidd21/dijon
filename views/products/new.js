@@ -3,15 +3,16 @@ module.exports = ({
 }, errorString) => {
     return `<div>
  
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
+    
     <input name="title" placeholder="title" />
     <div class= "errorPrint">${errorCheck(errorString.title)}</div>
     <input name="price" placeholder="price" />
     <div class = "errorPrint">${errorCheck(errorString.price)}</div>
-    <input name="image" placeholder="image" />
+    <input type="file" name="image" />
     <div class = "errorPrint">${errorCheck(errorString.image)}</div>
     <button>Sign up</button><br><br><br>
-       <div>Session ID: ${req.session.userID}</div>
+    <div>Session ID: ${req.session.userID}</div>
 </form>
 </div>`
 };
