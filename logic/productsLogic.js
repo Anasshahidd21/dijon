@@ -3,15 +3,13 @@ const {
     check,
     validationResult
 } = require('express-validator');
-const signupView = require('../views/signupView');
-const signInView = require('../views/signInView');
-const bcrypt = require('bcrypt');
-const repo = require('../repositories/users');
+
 const app = express();
 const router = express.Router();
 const layoutView = require('../views/layout');
 const productsRepo = require('../repositories/products');
 const newProduct = require('../views/products/new');
+const listView = require('../views/products/list');
 
 const multer = require('multer');
 const upload = multer({
@@ -23,7 +21,7 @@ let errorString = '';
 router.get('/products/create', async (req, res) => {
 
     if (!req.session.userID) {
-        throw new Error('Access blocked');
+        res.send('Please Login/Signup first');
     }
     res.send(layoutView(newProduct({
         req
@@ -73,6 +71,36 @@ router.post('/products/create', upload.single('image'), [check('title', 'Title c
         }, 'Create Product'));
     });
 
+router.get('/products', async (req, res) => {
+    if (!req.session.userID) {
+        res.send('Please Login/Signup first');
+    }
+    const products = await productsRepo.getAll();
+    const list = listProducts(products);
+
+    res.send(layoutView(listView(list), {
+        req
+    }, 'View Products'));
+
+})
+
+function listProducts(products) {
+    const productList = [];
+    for (const product of products) {
+        let {
+            title,
+            value
+        } = product;
+        productList.push({
+            title,
+            value
+        });
+    }
+    return productList;
+}
+
+
+
 function joinErrors(err) {
     const error = err.reduce(
         (obj, item) => Object.assign(obj, {
@@ -80,5 +108,7 @@ function joinErrors(err) {
         }), {});
     return error;
 }
+
+
 
 module.exports = router;

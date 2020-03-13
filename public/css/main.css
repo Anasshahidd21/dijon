@@ -24,3 +24,14 @@ button {
 .errorPrint {
     color: rgb(204, 56, 56);
 }
+
+
+/* Only for list */
+.listHeader {
+    font-size: 18px;
+}
+
+td,
+th {
+    padding: 0.5rem 2rem;
+}
