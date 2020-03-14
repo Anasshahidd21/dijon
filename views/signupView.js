@@ -17,10 +17,5 @@ module.exports = ({
 };
 
 function errorCheck(property) {
-
     return property ? property : '';
-    // if (property) {
-    //     return property;
-    // }
-    // return '';
 }

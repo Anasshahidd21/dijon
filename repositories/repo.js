@@ -47,12 +47,13 @@ class Repository {
 
 
     async create(attrs) {
+        attrs.id = this.randomID();
         let users = await this.getAll();
         const user = {
             ...attrs
         };
         users.push(user);
-
+        this.writeFile(this.filename, users);
         return user;
     }
 

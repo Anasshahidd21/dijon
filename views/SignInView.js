@@ -12,11 +12,6 @@ module.exports = ({
 </div>`
 }
 
-
 function errorCheck(property) {
-    if (property) {
-        return property;
-    }
-
-    return '';
+    return property ? property : '';
 }

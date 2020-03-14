@@ -17,9 +17,7 @@ router.get('/signup', (req, res) => {
 
     res.send(layoutView(signupView({
         req
-    }, errorString), {
-        req
-    }, 'signup'));
+    }, errorString), 'Sign Up'));
 });
 
 router.post('/signup', [check('email').trim().normalizeEmail().isEmail().withMessage('Invalid Email').custom(async (email, {
@@ -61,9 +59,7 @@ router.post('/signup', [check('email').trim().normalizeEmail().isEmail().withMes
     } else {
         res.send(layoutView(signupView({
             req
-        }, joinErrors(errors)), {
-            req
-        }, 'signup'));
+        }, joinErrors(errors)), 'signup'));
     }
 });
 
@@ -84,9 +80,7 @@ router.get('/signout', (req, res) => {
 router.get('/signin', (req, res) => {
     res.send(layoutView(signInView({
         req
-    }, errorString), {
-        req
-    }, 'Signin'));
+    }, errorString), 'Login'));
 });
 
 router.post('/signin', [
@@ -136,9 +130,7 @@ router.post('/signin', [
         } else {
             res.send(layoutView(signInView({
                 req
-            }, joinErrors(errors)), {
-                req
-            }, 'signin'));
+            }, joinErrors(errors)), 'signin'));
         }
     });
 
