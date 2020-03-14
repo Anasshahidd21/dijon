@@ -79,7 +79,8 @@ router.get('/products', async (req, res) => {
 
 })
 
-router.get('product/edit/:id', async (req, res) => {
+router.get('/product/edit/:id', async (req, res) => {
+
     if (!req.session.userID) {
         res.send('Please Login/Signup first');
     }
@@ -95,7 +96,7 @@ router.get('product/edit/:id', async (req, res) => {
     }, errorString), 'Edit Product'));
 })
 
-router.post('product/edit/:id', upload.single('image'), [check('title', 'Title cannot be less than 5 characters').trim().isLength({
+router.post('/product/edit/:id', upload.single('image'), [check('title', 'Title cannot be less than 5 characters').trim().isLength({
         min: 5
     }), check('price', 'Price needs to be atleast 1$').trim().notEmpty().custom(price => {
         const value = parseInt(price);
