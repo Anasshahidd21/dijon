@@ -1,3 +1,10 @@
+.title {
+    text-align: center;
+    margin-top: 10vh;
+    margin-bottom: -10vh;
+}
+
+
 input {
     display: block;
     padding: 0.5rem;
@@ -34,4 +41,23 @@ button {
 td,
 th {
     padding: 0.5rem 2rem;
+}
+
+.icon-delete {
+    color: rgb(235, 85, 85);
+    cursor: pointer;
+}
+
+.icon-edit {
+    color: seagreen;
+    cursor: pointer;
+}
+
+.icon-add {
+    color: coral;
+    cursor: pointer;
+}
+
+a {
+    all: unset;
 }
