@@ -21,8 +21,8 @@ function displayList(list) {
         arList[i] = `<tr class="item">
         <td>${item.title}</td>
         <td>${item.value}</td>  
-        <td class = "icon-edit"><a href="/edit/${item.id}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>
-        <td class = "icon-delete"><i class="fa fa-times" aria-hidden="true"></i></td>
+        <td class = "icon-edit"><a href="product/edit/${item.id}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>
+        <td class = "icon-delete"><a href="product/delete/${item.id}"><i class="fa fa-times" aria-hidden="true"></i></td>
         </tr>`
         i++;
     }

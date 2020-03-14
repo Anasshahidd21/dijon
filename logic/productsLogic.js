@@ -57,8 +57,8 @@ router.post('/products/create', upload.single('image'), [check('title', 'Title c
                 value,
                 image
             });
-
-            res.send('Product Created Successfully');
+            res.redirect('/products');
+            // res.send('Product Created Successfully');
         }
 
         error.push({
@@ -79,7 +79,7 @@ router.get('/products', async (req, res) => {
 
 })
 
-router.get('/edit/:id', async (req, res) => {
+router.get('product/edit/:id', async (req, res) => {
     if (!req.session.userID) {
         res.send('Please Login/Signup first');
     }
@@ -95,7 +95,7 @@ router.get('/edit/:id', async (req, res) => {
     }, errorString), 'Edit Product'));
 })
 
-router.post('/edit/:id', upload.single('image'), [check('title', 'Title cannot be less than 5 characters').trim().isLength({
+router.post('product/edit/:id', upload.single('image'), [check('title', 'Title cannot be less than 5 characters').trim().isLength({
         min: 5
     }), check('price', 'Price needs to be atleast 1$').trim().notEmpty().custom(price => {
         const value = parseInt(price);
@@ -136,6 +136,17 @@ router.post('/edit/:id', upload.single('image'), [check('title', 'Title cannot b
             product
         }, joinErrors(error)), 'Edit Product'));
     });
+
+
+router.get('/product/delete/:id', async (req, res) => {
+    const id = req.params.id;
+    if (id) {
+        await productsRepo.delete(id);
+        res.redirect('/products');
+    }
+
+    res.send(`Product with requested ID: ${id} not found`);
+})
 
 function joinErrors(err) {
     const error = err.reduce(
